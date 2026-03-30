@@ -6,6 +6,14 @@ from analyzer.phishing_checks import run_all_checks
 from analyzer.risk_scorer import calculate_score, classify_risk, collect_reasons
 from analyzer.whois_lookup import get_whois_info, whois_risk_score
 
+#css
+st.markdown("""<style>
+.footer{position:fixed;left:0;bottom:0;width:100%;background-color:#0e1117;
+color:white;text-align:center;padding:10px;font-size:14px;
+border-top:1px solid #262730;z-index:100;}
+</style>""", unsafe_allow_html=True)
+
+
 # ─────────────────────────────────────────────
 # PAGE CONFIG
 # ─────────────────────────────────────────────
@@ -20,25 +28,45 @@ st.set_page_config(
 # ─────────────────────────────────────────────
 st.title("🛡️ Phishing URL Analyzer")
 st.markdown("SOC-style phishing detection tool")
+# ─────────────────────────────────────────────
+# SESSION STATE INIT
+# ─────────────────────────────────────────────
+if "url" not in st.session_state:
+    st.session_state.url = ""
 
 # ─────────────────────────────────────────────
-# INPUT
+# LOAD EXAMPLE BUTTON (MOVE ABOVE INPUT)
 # ─────────────────────────────────────────────
-url = st.text_input("🔗 Enter URL to analyze")
+col1, col2 = st.columns(2)
+
+with col1:
+    analyze_btn = st.button("🔍 Analyze")
+
+with col2:
+    if st.button("⚡ Load Example"):
+        st.session_state.url = "http://paypal-login-secure.tk@fake.com"
 
 # ─────────────────────────────────────────────
-# ANALYZE BUTTON
+# INPUT FIELD (AFTER SETTING STATE)
 # ─────────────────────────────────────────────
-if st.button("🔍 Analyze"):
+url = st.text_input("🔗 Enter URL to analyze", value=st.session_state.url)
 
-    if not url:
+# Sync state manually
+st.session_state.url = url
+
+# ─────────────────────────────────────────────
+# ANALYSIS LOGIC
+# ─────────────────────────────────────────────
+if analyze_btn:
+
+    if not st.session_state.url:
         st.warning("⚠️ Please enter a URL")
         st.stop()
 
     with st.spinner("Analyzing URL..."):
 
-        # STEP 1: Validate URL
-        valid, parts, parsed_url = validate_and_parse(url)
+        # Validate URL
+        valid, parts, parsed_url = validate_and_parse(st.session_state.url)
 
         if not valid:
             st.error("❌ Invalid URL")
@@ -46,21 +74,21 @@ if st.button("🔍 Analyze"):
 
         st.success("✅ URL is valid")
 
-        # STEP 2: Run checks
+        # Run phishing checks
         results = run_all_checks(parsed_url, parts)
 
-        # STEP 3: WHOIS
+        # WHOIS lookup
         whois_data = get_whois_info(parts.get("domain", ""))
         whois_result = whois_risk_score(whois_data)
         results.append(whois_result)
 
-        # STEP 4: Risk Calculation
+        # Risk scoring
         score = calculate_score(results)
         risk = classify_risk(score)
         reasons = collect_reasons(results)
 
     # ─────────────────────────────────────────────
-    # DISPLAY RESULTS
+    # OUTPUT SECTION
     # ─────────────────────────────────────────────
 
     # 📊 Risk Score
@@ -72,11 +100,14 @@ if st.button("🔍 Analyze"):
     st.subheader("🚨 Risk Level")
 
     if risk["level"] == "HIGH":
-        st.error(f"🔴 HIGH RISK")
+        st.error("🔴 HIGH RISK")
     elif risk["level"] == "MEDIUM":
-        st.warning(f"🟡 MEDIUM RISK")
+        st.warning("🟡 MEDIUM RISK")
     else:
-        st.success(f"🟢 LOW RISK")
+        st.success("🟢 LOW RISK")
+
+    # ℹ️ Explanation
+    st.info("This URL is classified based on multiple phishing indicators such as suspicious keywords, domain tricks, and insecure protocol.")
 
     # 🔍 Indicators
     st.subheader("🔍 Indicators")
@@ -87,7 +118,7 @@ if st.button("🔍 Analyze"):
     else:
         st.success("✅ No phishing indicators detected")
 
-    # 🌐 WHOIS INFO
+    # 🌐 WHOIS Info
     st.subheader("🌐 WHOIS Info")
 
     if whois_data.get("error"):
@@ -101,3 +132,13 @@ if st.button("🔍 Analyze"):
 
         if whois_data.get("is_new"):
             st.error("🚨 Newly registered domain (High Risk)")
+
+# ─────────────────────────────────────────────
+# FOOTER
+# ─────────────────────────────────────────────
+st.markdown("""
+<div class="footer">
+    👨‍💻 Developed by <b>Abhijith A</b> | SOC Analyst (Aspiring) |
+    <a href="https://github.com/Abhijith-Anbalagan" target="_blank" style="color:#4da6ff;">🔗 GitHub</a>
+</div>
+""", unsafe_allow_html=True)
