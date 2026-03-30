@@ -1,0 +1,11 @@
+# ============================================================
+# requirements.txt — Project Dependencies
+#
+# Install all at once with:
+#   pip install -r requirements.txt
+# ============================================================
+
+requests==2.31.0        # HTTP requests (VirusTotal API calls)
+python-whois==0.9.4     # WHOIS domain lookup
+colorama==0.4.6         # Colored terminal output (cross-platform)
+validators==0.22.0      # URL validation

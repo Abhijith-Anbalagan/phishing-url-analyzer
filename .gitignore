@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Virtual Environment (NEVER commit this to GitHub)
+venv/
+env/
+.venv/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+
+# ⚠️ SECURITY: Never commit files with real API keys
+# If you accidentally commit config.py with a real key,
+# revoke the key immediately at virustotal.com
+config_local.py
+.env
+secrets.py
+
+# OS files
+.DS_Store
+Thumbs.db
