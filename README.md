@@ -2,6 +2,12 @@
 
 > A SOC-focused Python tool for detecting and scoring phishing URLs using multiple detection techniques, WHOIS lookups, and optional VirusTotal API integration.
 
+
+## 🌐 Live Demo
+
+🔗 https://phishing-url-analyzer-abhijith.streamlit.app/
+
+
 ![Python](https://img.shields.io/badge/Python-3.8%2B-blue?logo=python)
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![SOC](https://img.shields.io/badge/Use%20Case-SOC%20%7C%20Blue%20Team-blue)
